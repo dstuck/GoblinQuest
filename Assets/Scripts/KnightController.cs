@@ -11,6 +11,7 @@ public class KnightController : MonoBehaviour
     int currentHealth;
 
     float planTimer;
+    public bool isAttacking = false;
 
     //public float timeInvincible = 1.0f;
     //bool isInvincible;
@@ -48,7 +49,7 @@ public class KnightController : MonoBehaviour
         }
 
         animator.SetFloat("Look X", lookDirection.x);
-        //animator.SetFloat("Look X", lookDirection.y);
+        animator.SetFloat("Look Y", lookDirection.y);
         animator.SetFloat("Speed", move.magnitude);
 
         //if (isInvincible)
@@ -58,26 +59,38 @@ public class KnightController : MonoBehaviour
         //        isInvincible = false;
         //}
 
-        if (planTimer > 2.0)
+        if (planTimer > 2.0 && !isAttacking)
         {
             Attack();
-            planTimer = 0.0f;
-            horizontal = -horizontal;
         }
     }
 
     void FixedUpdate()
     {
-        Vector2 position = rigidbody2d.position;
-        position.x = position.x + speed * horizontal * Time.deltaTime;
-        position.y = position.y + speed * vertical * Time.deltaTime;
+        if (!isAttacking)
+        {
+            Vector2 position = rigidbody2d.position;
+            position.x = position.x + speed * horizontal * Time.deltaTime;
+            position.y = position.y + speed * vertical * Time.deltaTime;
 
-        rigidbody2d.MovePosition(position);
+            rigidbody2d.MovePosition(position);
+        }
     }
 
     void Attack()
     {
+        //Debug.Log("started attack");
+        isAttacking = true;
         animator.SetTrigger("Attack");
+    }
+
+    void CompleteAttack()
+    {
+        //Debug.Log("completed attack");
+        isAttacking = false;
+
+        planTimer = 0.0f;
+        horizontal = -horizontal;
     }
 
     public void ChangeHealth(int amount)
