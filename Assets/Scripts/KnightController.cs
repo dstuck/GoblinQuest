@@ -31,7 +31,7 @@ public class KnightController : MonoBehaviour
     Animator animator;
     Vector2 lookDirection = new Vector2(1, 0);
 
-    GameObject player;
+    Transform player;
 
     void Start()
     {
@@ -41,17 +41,18 @@ public class KnightController : MonoBehaviour
         horizontal = -1.0f;
         vertical = 0.0f;
 
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
 
         _stateMachine = new StateMachine();
 
-        var closeIn = new CloseIn(this, player.GetComponent<Transform>());
+        var closeIn = new CloseIn(this, player);
         var patrol = new Patrol(this, new Vector2(-1.0f, 0.0f));
 
-        //At(idle, hasBallState, () => hasBall);
+        At(patrol, closeIn, () => IsAttacking);
+        At(closeIn, patrol, () => Vector2.Distance(player.position, rigidbody2d.position) < 0.2f);
         //At(hasBallState, idle, () => !hasBall);
-        _stateMachine.SetState(closeIn);
-        //_stateMachine.SetState(patrol);
+        //_stateMachine.SetState(closeIn);
+        _stateMachine.SetState(patrol);
 
         void At(IState to, IState from, Func<bool> condition) => _stateMachine.AddTransition(to, from, condition);
 
