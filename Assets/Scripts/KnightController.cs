@@ -9,10 +9,12 @@ public class KnightController : MonoBehaviour
     public int maxHealth = 5;
 
     public int health { get { return currentHealth; } }
+
+    private bool isAttacking = false;
+    public bool IsAttacking { get => isAttacking; set => isAttacking = value; }
+
     int currentHealth;
 
-    float planTimer;
-    public bool isAttacking = false;
 
 
     //public float timeInvincible = 1.0f;
@@ -29,23 +31,27 @@ public class KnightController : MonoBehaviour
     Animator animator;
     Vector2 lookDirection = new Vector2(1, 0);
 
+    GameObject player;
+
     void Start()
     {
         animator = GetComponent<Animator>();
         rigidbody2d = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
-        planTimer = 0.0f;
         horizontal = -1.0f;
         vertical = 0.0f;
 
+        player = GameObject.FindGameObjectWithTag("Player");
+
         _stateMachine = new StateMachine();
 
-        var closeIn = new CloseIn(this);
+        var closeIn = new CloseIn(this, player.GetComponent<Transform>());
         var patrol = new Patrol(this, new Vector2(-1.0f, 0.0f));
 
         //At(idle, hasBallState, () => hasBall);
         //At(hasBallState, idle, () => !hasBall);
-        _stateMachine.SetState(patrol);
+        _stateMachine.SetState(closeIn);
+        //_stateMachine.SetState(patrol);
 
         void At(IState to, IState from, Func<bool> condition) => _stateMachine.AddTransition(to, from, condition);
 
@@ -54,7 +60,6 @@ public class KnightController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        planTimer += Time.deltaTime;
         _stateMachine.Tick();
 
         //if (isInvincible)
@@ -87,7 +92,7 @@ public class KnightController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!isAttacking)
+        if (!IsAttacking)
         {
             Vector2 position = rigidbody2d.position;
             position.x = position.x + speed * horizontal * Time.deltaTime;
@@ -100,16 +105,15 @@ public class KnightController : MonoBehaviour
     public void Attack()
     {
         //Debug.Log("started attack");
-        isAttacking = true;
+        IsAttacking = true;
         animator.SetTrigger("Attack");
     }
 
     void CompleteAttack()
     {
         //Debug.Log("completed attack");
-        isAttacking = false;
+        IsAttacking = false;
 
-        planTimer = 0.0f;
         //horizontal = -horizontal;
     }
 

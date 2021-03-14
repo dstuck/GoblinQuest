@@ -22,13 +22,17 @@ public class Patrol : IState
 
     public void Tick()
     {
-        planTimer += Time.deltaTime;
-        if (planTimer > patrolLength)
+        if (!_knight.IsAttacking)
         {
-            _patrolDirection *= -1.0f;
-            planTimer = 0.0f;
+            planTimer += Time.deltaTime;
+            _knight.SetMoveDirection(_patrolDirection);
+            if (planTimer > patrolLength)
+            {
+                _patrolDirection *= -1.0f;
+                _knight.Attack();
+                planTimer = 0.0f;
+            }
         }
-        _knight.SetMoveDirection(_patrolDirection);
     }
 
     public void OnExit()
