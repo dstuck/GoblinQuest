@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ public class KnightController : MonoBehaviour
     float planTimer;
     public bool isAttacking = false;
 
+
     //public float timeInvincible = 1.0f;
     //bool isInvincible;
     //float invincibleTimer;
@@ -21,6 +23,8 @@ public class KnightController : MonoBehaviour
     Rigidbody2D rigidbody2d;
     float horizontal;
     float vertical;
+
+    private StateMachine _stateMachine;
 
     Animator animator;
     Vector2 lookDirection = new Vector2(1, 0);
@@ -33,24 +37,25 @@ public class KnightController : MonoBehaviour
         planTimer = 0.0f;
         horizontal = -1.0f;
         vertical = 0.0f;
+
+        _stateMachine = new StateMachine();
+
+        var closeIn = new CloseIn(this);
+        var patrol = new Patrol(this, new Vector2(-1.0f, 0.0f));
+
+        //At(idle, hasBallState, () => hasBall);
+        //At(hasBallState, idle, () => !hasBall);
+        _stateMachine.SetState(patrol);
+
+        void At(IState to, IState from, Func<bool> condition) => _stateMachine.AddTransition(to, from, condition);
+
     }
 
     // Update is called once per frame
     void Update()
     {
         planTimer += Time.deltaTime;
-
-        Vector2 move = new Vector2(horizontal, vertical);
-
-        if (!Mathf.Approximately(move.x, 0.0f) || !Mathf.Approximately(move.y, 0.0f))
-        {
-            lookDirection.Set(move.x, move.y);
-            lookDirection.Normalize();
-        }
-
-        animator.SetFloat("Look X", lookDirection.x);
-        animator.SetFloat("Look Y", lookDirection.y);
-        animator.SetFloat("Speed", move.magnitude);
+        _stateMachine.Tick();
 
         //if (isInvincible)
         //{
@@ -58,11 +63,26 @@ public class KnightController : MonoBehaviour
         //    if (invincibleTimer < 0)
         //        isInvincible = false;
         //}
+    }
 
-        if (planTimer > 2.0 && !isAttacking)
+    public void SetMoveDirection(Vector2 direction, bool changeLook = true)
+    {
+        if (direction.SqrMagnitude() > 1.0f)
         {
-            Attack();
+            direction.Normalize();
         }
+        if ((!Mathf.Approximately(direction.x, 0.0f) || !Mathf.Approximately(direction.y, 0.0f)) && changeLook)
+        {
+            lookDirection.Set(direction.x, direction.y);
+            lookDirection.Normalize();
+        }
+
+        animator.SetFloat("Look X", lookDirection.x);
+        animator.SetFloat("Look Y", lookDirection.y);
+        animator.SetFloat("Speed", direction.magnitude);
+
+        horizontal = direction.x;
+        vertical = direction.y;
     }
 
     void FixedUpdate()
@@ -77,7 +97,7 @@ public class KnightController : MonoBehaviour
         }
     }
 
-    void Attack()
+    public void Attack()
     {
         //Debug.Log("started attack");
         isAttacking = true;
@@ -90,7 +110,7 @@ public class KnightController : MonoBehaviour
         isAttacking = false;
 
         planTimer = 0.0f;
-        horizontal = -horizontal;
+        //horizontal = -horizontal;
     }
 
     public void ChangeHealth(int amount)
