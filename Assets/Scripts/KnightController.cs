@@ -15,6 +15,7 @@ public class KnightController : MonoBehaviour
 
     int currentHealth;
 
+    const float ENGAGEMENT_RANGE = 1.0f;
 
 
     //public float timeInvincible = 1.0f;
@@ -46,13 +47,11 @@ public class KnightController : MonoBehaviour
         _stateMachine = new StateMachine();
 
         var closeIn = new CloseIn(this, player);
+        var engage = new Engage(this, player);
         var patrol = new Patrol(this, new Vector2(-1.0f, 0.0f));
 
         At(patrol, closeIn, () => IsAttacking);
-        At(closeIn, patrol, () => Vector2.Distance(player.position, rigidbody2d.position) < 0.2f);
-        //At(hasBallState, idle, () => !hasBall);
-        //_stateMachine.SetState(closeIn);
-        _stateMachine.SetState(patrol);
+        At(closeIn, engage, () => Vector2.Distance(player.position, rigidbody2d.position) < ENGAGEMENT_RANGE);        _stateMachine.SetState(patrol);
 
         void At(IState to, IState from, Func<bool> condition) => _stateMachine.AddTransition(to, from, condition);
 
@@ -79,16 +78,21 @@ public class KnightController : MonoBehaviour
         }
         if ((!Mathf.Approximately(direction.x, 0.0f) || !Mathf.Approximately(direction.y, 0.0f)) && changeLook)
         {
-            lookDirection.Set(direction.x, direction.y);
-            lookDirection.Normalize();
+            SetLookDirection(direction);
         }
 
-        animator.SetFloat("Look X", lookDirection.x);
-        animator.SetFloat("Look Y", lookDirection.y);
         animator.SetFloat("Speed", direction.magnitude);
 
         horizontal = direction.x;
         vertical = direction.y;
+    }
+
+    public void SetLookDirection(Vector2 direction)
+    {
+        lookDirection.Set(direction.x, direction.y);
+        lookDirection.Normalize();
+        animator.SetFloat("Look X", lookDirection.x);
+        animator.SetFloat("Look Y", lookDirection.y);
     }
 
     void FixedUpdate()
@@ -114,8 +118,6 @@ public class KnightController : MonoBehaviour
     {
         //Debug.Log("completed attack");
         IsAttacking = false;
-
-        //horizontal = -horizontal;
     }
 
     public void ChangeHealth(int amount)

@@ -18,6 +18,7 @@ public class Patrol : IState
     public void OnEnter()
     {
         planTimer = 0.0f;
+        Debug.Log("Entering: " + this.GetType().Name);
     }
 
     public void Tick()

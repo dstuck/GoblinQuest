@@ -16,6 +16,7 @@ public class CloseIn : IState
 
     public void OnEnter()
     {
+        Debug.Log("Entering: " + this.GetType().Name);
     }
 
     public void Tick()
