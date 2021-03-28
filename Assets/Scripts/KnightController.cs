@@ -76,7 +76,7 @@ public class KnightController : MonoBehaviour
         {
             direction.Normalize();
         }
-        if ((!Mathf.Approximately(direction.x, 0.0f) || !Mathf.Approximately(direction.y, 0.0f)) && changeLook)
+        if (changeLook && (!Mathf.Approximately(direction.x, 0.0f) || !Mathf.Approximately(direction.y, 0.0f)))
         {
             SetLookDirection(direction);
         }
