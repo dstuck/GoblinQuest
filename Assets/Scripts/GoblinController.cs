@@ -5,7 +5,7 @@ using UnityEngine;
 public class GoblinController : MonoBehaviour
 {
     public float speed = 3.0f;
-    public int maxHealth = 5;
+    public int maxHealth = 3;
 
     public int health { get { return currentHealth; } }
     int currentHealth;
@@ -58,6 +58,11 @@ public class GoblinController : MonoBehaviour
         {
             Attack();
         }
+
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            ChangeHealth(-1);
+        }
     }
 
     void FixedUpdate()
@@ -74,6 +79,12 @@ public class GoblinController : MonoBehaviour
         animator.SetTrigger("Stab");
     }
 
+    void Die()
+    {
+        Debug.Log("I'm dead!");
+        animator.SetTrigger("Death");
+    }
+
     public void ChangeHealth(int amount)
     {
         if (amount < 0)
@@ -81,12 +92,16 @@ public class GoblinController : MonoBehaviour
             if (isInvincible)
                 return;
 
-            //animator.SetTrigger("Hit");
+            animator.SetTrigger("Hit");
             isInvincible = true;
             invincibleTimer = timeInvincible;
         }
 
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         Debug.Log(currentHealth + "/" + maxHealth);
+        if (currentHealth == 0)
+        {
+            Die();
+        }
     }
 }
