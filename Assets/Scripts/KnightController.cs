@@ -34,6 +34,12 @@ public class KnightController : MonoBehaviour
 
     Transform player;
 
+    // COMBAT
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public LayerMask enemyLayers;
+
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -51,7 +57,9 @@ public class KnightController : MonoBehaviour
         var patrol = new Patrol(this, new Vector2(-1.0f, 0.0f));
 
         At(patrol, closeIn, () => IsAttacking);
-        At(closeIn, engage, () => Vector2.Distance(player.position, rigidbody2d.position) < ENGAGEMENT_RANGE);        _stateMachine.SetState(patrol);
+        At(closeIn, engage, () => Vector2.Distance(player.position, rigidbody2d.position) < ENGAGEMENT_RANGE);
+
+        _stateMachine.SetState(patrol);
 
         void At(IState to, IState from, Func<bool> condition) => _stateMachine.AddTransition(to, from, condition);
 
@@ -112,6 +120,23 @@ public class KnightController : MonoBehaviour
         //Debug.Log("started attack");
         IsAttacking = true;
         animator.SetTrigger("Attack");
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            //enemy.GetComponent<Damageable>
+            Debug.Log("We hit " + enemy.name);
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null)
+        {
+            return;
+        }
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
     void CompleteAttack()
