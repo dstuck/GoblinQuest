@@ -13,6 +13,8 @@ public class KnightController : MonoBehaviour
     private bool isAttacking = false;
     public bool IsAttacking { get => isAttacking; set => isAttacking = value; }
 
+    public int attackDamage = 1;
+
     int currentHealth;
 
     const float ENGAGEMENT_RANGE = 1.0f;
@@ -69,13 +71,6 @@ public class KnightController : MonoBehaviour
     void Update()
     {
         _stateMachine.Tick();
-
-        //if (isInvincible)
-        //{
-        //    invincibleTimer -= Time.deltaTime;
-        //    if (invincibleTimer < 0)
-        //        isInvincible = false;
-        //}
     }
 
     public void SetMoveDirection(Vector2 direction, bool changeLook = true)
@@ -125,7 +120,9 @@ public class KnightController : MonoBehaviour
 
         foreach (Collider2D enemy in hitEnemies)
         {
-            //enemy.GetComponent<Damageable>
+            Damageable damageable = enemy.GetComponent<Damageable>();
+            damageable.ChangeHealth(-attackDamage);
+
             Debug.Log("We hit " + enemy.name);
         }
     }
