@@ -9,6 +9,7 @@ public class Engage : IState
     private Transform _self;
     private bool facingRight;
     private Vector2 RIGHT = new Vector2(1.0f, 0.0f);
+    private Vector2 ZERO = new Vector2(0.0f, 0.0f);
     Vector2 nextTarget;
 
     private float planTimer;
@@ -62,5 +63,6 @@ public class Engage : IState
 
     public void OnExit()
     {
+        _knight.SetMoveDirection(ZERO, false);
     }
 }

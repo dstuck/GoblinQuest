@@ -12,6 +12,7 @@ public class KnightController : MonoBehaviour
     private StateMachine _stateMachine;
 
     Attacker attacker;
+    Damageable damageable;
     Mover2D mover;
     Transform player;
 
@@ -19,6 +20,7 @@ public class KnightController : MonoBehaviour
     {
         rigidbody2d = GetComponent<Rigidbody2D>();
         attacker = GetComponent<Attacker>();
+        damageable = GetComponent<Damageable>();
         mover = GetComponent<Mover2D>();
 
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
@@ -28,9 +30,11 @@ public class KnightController : MonoBehaviour
         var closeIn = new CloseIn(this, player);
         var engage = new Engage(this, player);
         var patrol = new Patrol(this, new Vector2(-1.0f, 0.0f));
+        var dead = new Dead();
 
         At(patrol, closeIn, () => attacker.IsAttacking);
         At(closeIn, engage, () => Vector2.Distance(player.position, rigidbody2d.position) < ENGAGEMENT_RANGE);
+        At(engage, dead, () => damageable.IsDead);
 
         _stateMachine.SetState(patrol);
 
