@@ -280,6 +280,8 @@ GameObject:
   - component: {fileID: 596439564}
   - component: {fileID: 596439563}
   - component: {fileID: 596439568}
+  - component: {fileID: 596439569}
+  - component: {fileID: 596439570}
   m_Layer: 9
   m_Name: Knight
   m_TagString: Untagged
@@ -300,12 +302,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1
-  maxHealth: 5
-  attackPoint: {fileID: 348015763}
-  attackRange: 0.5
-  enemyLayers:
-    serializedVersion: 2
-    m_Bits: 256
 --- !u!50 &596439564
 Rigidbody2D:
   serializedVersion: 4
@@ -438,6 +434,38 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 0.2}
   m_EdgeRadius: 0
+--- !u!114 &596439569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 596439562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01c1fcc3c3b4d41fab496119da957698, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 1
+  timeInvincible: 0.5
+--- !u!114 &596439570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 596439562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8734c8cd94e8247c4a239552880f8f01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackDamage: 1
+  attackPoint: {fileID: 348015763}
+  attackRange: 0.5
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &1363332661
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,6 +480,8 @@ GameObject:
   - component: {fileID: 1363332664}
   - component: {fileID: 1363332666}
   - component: {fileID: 1363332667}
+  - component: {fileID: 1363332668}
+  - component: {fileID: 1363332669}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -538,8 +568,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3
-  maxHealth: 3
-  timeInvincible: 2
 --- !u!50 &1363332665
 Rigidbody2D:
   serializedVersion: 4
@@ -606,3 +634,35 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.25, y: 0.12}
   m_EdgeRadius: 0
+--- !u!114 &1363332668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363332661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01c1fcc3c3b4d41fab496119da957698, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 3
+  timeInvincible: 2
+--- !u!114 &1363332669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363332661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8734c8cd94e8247c4a239552880f8f01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackDamage: 1
+  attackPoint: {fileID: 13784882}
+  attackRange: 0.5
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 512

@@ -4,6 +4,7 @@ using UnityEngine.AI;
 public class Engage : IState
 {
     private KnightController _knight;
+    private Attacker _attacker;
     private Transform _target;
     private Transform _self;
     private bool facingRight;
@@ -21,6 +22,7 @@ public class Engage : IState
     {
         _knight = knight;
         _self = _knight.GetComponent<Transform>();
+        _attacker = _knight.GetComponent<Attacker>();
         _target = target;
     }
 
@@ -48,7 +50,7 @@ public class Engage : IState
         }
         if(planTimer > attackTime)
         {
-            _knight.Attack();
+            _attacker.Attack();
             planTimer = 0.0f;
         }
     }

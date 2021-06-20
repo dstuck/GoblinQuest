@@ -6,24 +6,9 @@ using UnityEngine;
 public class KnightController : MonoBehaviour
 {
     public float speed = 1.0f;
-    public int maxHealth = 5;
 
-    public int health { get { return currentHealth; } }
-
-    private bool isAttacking = false;
-    public bool IsAttacking { get => isAttacking; set => isAttacking = value; }
-
-    public int attackDamage = 1;
-
-    int currentHealth;
 
     const float ENGAGEMENT_RANGE = 1.0f;
-
-
-    //public float timeInvincible = 1.0f;
-    //bool isInvincible;
-    //float invincibleTimer;
-
 
     Rigidbody2D rigidbody2d;
     float horizontal;
@@ -31,22 +16,17 @@ public class KnightController : MonoBehaviour
 
     private StateMachine _stateMachine;
 
+    Attacker attacker;
     Animator animator;
     Vector2 lookDirection = new Vector2(1, 0);
 
     Transform player;
 
-    // COMBAT
-    public Transform attackPoint;
-    public float attackRange = 0.5f;
-    public LayerMask enemyLayers;
-
-
     void Start()
     {
         animator = GetComponent<Animator>();
         rigidbody2d = GetComponent<Rigidbody2D>();
-        currentHealth = maxHealth;
+        attacker = GetComponent<Attacker>();
         horizontal = -1.0f;
         vertical = 0.0f;
 
@@ -58,7 +38,7 @@ public class KnightController : MonoBehaviour
         var engage = new Engage(this, player);
         var patrol = new Patrol(this, new Vector2(-1.0f, 0.0f));
 
-        At(patrol, closeIn, () => IsAttacking);
+        At(patrol, closeIn, () => attacker.IsAttacking);
         At(closeIn, engage, () => Vector2.Distance(player.position, rigidbody2d.position) < ENGAGEMENT_RANGE);
 
         _stateMachine.SetState(patrol);
@@ -100,7 +80,7 @@ public class KnightController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!IsAttacking)
+        if (!attacker.IsAttacking)
         {
             Vector2 position = rigidbody2d.position;
             position.x = position.x + speed * horizontal * Time.deltaTime;
@@ -109,53 +89,4 @@ public class KnightController : MonoBehaviour
             rigidbody2d.MovePosition(position);
         }
     }
-
-    public void Attack()
-    {
-        //Debug.Log("started attack");
-        IsAttacking = true;
-        animator.SetTrigger("Attack");
-
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-
-        foreach (Collider2D enemy in hitEnemies)
-        {
-            Damageable damageable = enemy.GetComponent<Damageable>();
-            damageable.ChangeHealth(-attackDamage);
-
-            Debug.Log("We hit " + enemy.name);
-        }
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        if (attackPoint == null)
-        {
-            return;
-        }
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    }
-
-    void CompleteAttack()
-    {
-        //Debug.Log("completed attack");
-        IsAttacking = false;
-    }
-
-    public void ChangeHealth(int amount)
-    {
-        //if (amount < 0)
-        //{
-        //    if (isInvincible)
-        //        return;
-
-        //    //animator.SetTrigger("Hit");
-        //    isInvincible = true;
-        //    invincibleTimer = timeInvincible;
-        //}
-
-        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        Debug.Log(currentHealth + "/" + maxHealth);
-    }
-
 }

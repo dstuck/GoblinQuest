@@ -10,12 +10,14 @@ public class GoblinController : MonoBehaviour
     float horizontal;
     float vertical;
 
+    Attacker attacker;
     Animator animator;
     Vector2 lookDirection = new Vector2(1, 0);
 
     void Start()
     {
         animator = GetComponent<Animator>();
+        attacker = GetComponent<Attacker>();
         rigidbody2d = GetComponent<Rigidbody2D>();
     }
 
@@ -54,6 +56,6 @@ public class GoblinController : MonoBehaviour
 
     void Attack()
     {
-        animator.SetTrigger("Stab");
+        attacker.Attack();
     }
 }
