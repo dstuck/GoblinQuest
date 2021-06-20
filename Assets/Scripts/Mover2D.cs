@@ -13,6 +13,7 @@ public class Mover2D : MonoBehaviour
     float vertical;
 
     Rigidbody2D rigidbody2d;
+    Transform transform;
     Animator animator;
     Vector2 lookDirection = new Vector2(1, 0);
 
@@ -21,6 +22,7 @@ public class Mover2D : MonoBehaviour
     {
         rigidbody2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        transform = GetComponent<Transform>();
         horizontal = 0.0f;
         vertical = 0.0f;
     }
@@ -52,6 +54,15 @@ public class Mover2D : MonoBehaviour
     public void SetLookDirection(Vector2 direction)
     {
         if (IsFrozen) { return; }
+
+        float sign = 1.0f;
+        if (direction.x < 0.0f)
+        {
+            sign = -1.0f;
+        }
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x) * sign;
+        transform.localScale = scale;
 
         lookDirection.Set(direction.x, direction.y);
         lookDirection.Normalize();
