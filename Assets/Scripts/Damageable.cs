@@ -37,12 +37,14 @@ public class Damageable : MonoBehaviour
     {
         if (amount < 0)
         {
-            if (isInvincible)
-                return;
+            if (isInvincible) { return;  }
 
-            animator.SetTrigger("Hit");
-            isInvincible = true;
-            invincibleTimer = timeInvincible;
+            if (_currentHealth > 0)
+            {
+                animator.SetTrigger("Hit");
+                isInvincible = true;
+                invincibleTimer = timeInvincible;
+            }
         }
 
         _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, maxHealth);
