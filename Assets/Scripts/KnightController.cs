@@ -5,30 +5,21 @@ using UnityEngine;
 
 public class KnightController : MonoBehaviour
 {
-    public float speed = 1.0f;
-
-
     const float ENGAGEMENT_RANGE = 1.0f;
 
     Rigidbody2D rigidbody2d;
-    float horizontal;
-    float vertical;
 
     private StateMachine _stateMachine;
 
     Attacker attacker;
-    Animator animator;
-    Vector2 lookDirection = new Vector2(1, 0);
-
+    Mover2D mover;
     Transform player;
 
     void Start()
     {
-        animator = GetComponent<Animator>();
         rigidbody2d = GetComponent<Rigidbody2D>();
         attacker = GetComponent<Attacker>();
-        horizontal = -1.0f;
-        vertical = 0.0f;
+        mover = GetComponent<Mover2D>();
 
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
 
@@ -51,42 +42,17 @@ public class KnightController : MonoBehaviour
     void Update()
     {
         _stateMachine.Tick();
+        mover.IsFrozen = attacker.IsAttacking;
     }
 
     public void SetMoveDirection(Vector2 direction, bool changeLook = true)
     {
-        if (direction.SqrMagnitude() > 1.0f)
-        {
-            direction.Normalize();
-        }
-        if (changeLook && (!Mathf.Approximately(direction.x, 0.0f) || !Mathf.Approximately(direction.y, 0.0f)))
-        {
-            SetLookDirection(direction);
-        }
-
-        animator.SetFloat("Speed", direction.magnitude);
-
-        horizontal = direction.x;
-        vertical = direction.y;
+        mover.SetMoveDirection(direction, changeLook);
     }
 
     public void SetLookDirection(Vector2 direction)
     {
-        lookDirection.Set(direction.x, direction.y);
-        lookDirection.Normalize();
-        animator.SetFloat("Look X", lookDirection.x);
-        animator.SetFloat("Look Y", lookDirection.y);
+        mover.SetLookDirection(direction);
     }
 
-    void FixedUpdate()
-    {
-        if (!attacker.IsAttacking)
-        {
-            Vector2 position = rigidbody2d.position;
-            position.x = position.x + speed * horizontal * Time.deltaTime;
-            position.y = position.y + speed * vertical * Time.deltaTime;
-
-            rigidbody2d.MovePosition(position);
-        }
-    }
 }

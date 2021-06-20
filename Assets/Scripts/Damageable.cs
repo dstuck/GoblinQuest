@@ -5,8 +5,11 @@ using UnityEngine;
 public class Damageable : MonoBehaviour
 {
     public int maxHealth = 3;
-    public int health { get { return currentHealth; } }
-    int currentHealth;
+    public int health { get { return _currentHealth; } }
+    int _currentHealth;
+
+    bool _isDead = false;
+    public bool IsDead { get { return _isDead; } }
 
     public float timeInvincible = 2.0f;
     bool isInvincible;
@@ -18,7 +21,7 @@ public class Damageable : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        currentHealth = maxHealth;
+        _currentHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -42,9 +45,9 @@ public class Damageable : MonoBehaviour
             invincibleTimer = timeInvincible;
         }
 
-        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        Debug.Log(currentHealth + "/" + maxHealth);
-        if (currentHealth == 0)
+        _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, maxHealth);
+        Debug.Log(_currentHealth + "/" + maxHealth);
+        if (_currentHealth == 0)
         {
             Die();
         }
@@ -52,6 +55,7 @@ public class Damageable : MonoBehaviour
 
     void Die()
     {
+        _isDead = true;
         Debug.Log("I'm dead!");
         animator.SetTrigger("Death");
     }
